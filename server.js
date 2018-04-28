@@ -4,19 +4,20 @@ var bodyParser= require("body-parser");
 
 
 // setting up express app
-app = express();
-var PORT = process.env.PORT || 3000;
+var app = express();
+var PORT = process.env.PORT || 5030;
 
 // setting up app to handle data parsing
 
 app.use(bodyParser.urlencoded({ extended:true}));
 app.use(bodyParser.json());
-
+app.use(bodyParser.text());
+app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
 
 // pass the express app into the required routes 
-require('./app/routing/apiRoutes');
-require('./app//routing/htmlRoutes');
+require('./app/routing/apiRoutes.js')(app);
+require('./app/routing/htmlRoutes.js')(app);
 
 
 // makes the server start listening

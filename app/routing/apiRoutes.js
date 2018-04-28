@@ -1,21 +1,40 @@
-let express = require("express");
+module.exports = function apiRoutes(app) {
+    let fs = require('fs');
+    let path = require("path");
+    let friends = require('./../data/friends.js');
 
-let app = express.Router();
+    app.get("/api/friends", function (req, res){
+        return res.json(friends);
+    });
 
-let matches = require('../data/friends.js');
+    app.post('/api/friends', function (req, res){
+        var total;
+        var diffArray= [];
+        var newFriend = req.body;
 
-// middle wear ( like car wash)
-app.get("/api/friend", function(req, res){
-    return res.json(matches)
-})
+        for (var i = 0; i<friends.length; i++){
+            total = 0;
+            for (var j = 0; j<newFriend.scores.length; j++){
+                total += Math.abs(friends[i].score[i] - newFriend.scores[j]);
+            }
+            diffArray.push(total);
+        }
 
-app.post('/api/friends', function(req, res) {
-    let newFriend = req.body
+        var match = diffArray.indexOf(math.min(...diffArray));
 
-    friendsList.push(newFriend);
+        friends.push(newFriend);
 
-    res.json(newFriend)
+        console.log(newFriend);
 
-})
+        fs.readFile(path.join(__dirname, "../data/friends.json"), "utf8", function(err, data){
+            if (err) throw err;
+            var json = JSON.parse(data);
+            json.push(newFriend);
+            fs.writeFile(path.join(__dirname, "../data/friend.json"), JSON.stringify(json, null, 2), function(err){
+                if (err) throw err;
+            })
+        })
+        res.json(friends[match]);
+    })
 
-module.exports = app
+} 
